@@ -1,0 +1,11 @@
+.vs/
+.serena/
+artifacts/
+bin/
+obj/
+tests/**/bin/
+tests/**/obj/
+tests/**/ui-smoke.png
+*.user
+*.suo
+*.pdb

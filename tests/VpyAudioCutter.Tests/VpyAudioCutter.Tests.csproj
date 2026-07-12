@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\..\VpyTrimParser.cs" Link="VpyTrimParser.cs" />
+    <Compile Include="..\..\CltWriter.cs" Link="CltWriter.cs" />
+    <Compile Include="..\..\BeSplitAudioCutter.cs" Link="BeSplitAudioCutter.cs" />
+    <Compile Include="..\..\ExternalProcessRunner.cs" Link="ExternalProcessRunner.cs" />
+    <Compile Include="..\..\MediaAudioWorkflow.cs" Link="MediaAudioWorkflow.cs" />
+  </ItemGroup>
+</Project>
