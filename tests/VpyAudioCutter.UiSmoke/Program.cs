@@ -29,10 +29,39 @@ internal static class Program
         if (fpsSelector is null || !fpsSelector.Items.Contains("29.97003") || fpsSelector.DropDownStyle != ComboBoxStyle.DropDown)
             throw new InvalidOperationException("The editable framerate preset list is missing.");
 
+        var transitionSelector = controls
+            .OfType<ComboBox>()
+            .Single(comboBox => comboBox.Items.Contains("NO_TRANSITION"));
+        var parseButton = controls.OfType<Button>().Single(button => button.Text == "解析脚本");
+        if (Math.Abs(GetVerticalCenter(fpsSelector) - GetVerticalCenter(transitionSelector)) > 1 ||
+            Math.Abs(GetVerticalCenter(transitionSelector) - GetVerticalCenter(parseButton)) > 1)
+        {
+            throw new InvalidOperationException("The framerate, transition, and parse controls must share one vertical center.");
+        }
+
+        if (!controls.OfType<Label>().Any(label => label.Text == "过渡方式"))
+            throw new InvalidOperationException("The CLT transition field must use an accurate label.");
+
+        var audioTrackSelector = controls
+            .OfType<ComboBox>()
+            .Single(comboBox => comboBox.DropDownStyle == ComboBoxStyle.DropDownList && comboBox.Items.Count == 0);
+        var analyzeButton = controls.OfType<Button>().Single(button => button.Text == "分析媒体");
+        var toolsButton = controls.OfType<Button>().Single(button => button.Text == "工具...");
+        if (Math.Abs(GetVerticalCenter(audioTrackSelector) - GetVerticalCenter(analyzeButton)) > 1 ||
+            Math.Abs(GetVerticalCenter(analyzeButton) - GetVerticalCenter(toolsButton)) > 1)
+        {
+            throw new InvalidOperationException("The audio track controls must stay aligned on one row.");
+        }
+
         using var bitmap = new Bitmap(form.Width, form.Height);
         form.DrawToBitmap(bitmap, new Rectangle(Point.Empty, bitmap.Size));
         bitmap.Save(Path.Combine(AppContext.BaseDirectory, "ui-smoke.png"));
         form.Close();
+    }
+
+    private static int GetVerticalCenter(Control control)
+    {
+        return control.Top + control.Height / 2;
     }
 
     private static IEnumerable<Control> EnumerateControls(Control root)

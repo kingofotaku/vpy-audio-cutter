@@ -152,15 +152,27 @@ public sealed class MainForm : Form
 
     private Control BuildOptionsPanel()
     {
-        var panel = new FlowLayoutPanel
+        var panel = new TableLayoutPanel
         {
-            Dock = DockStyle.Fill,
+            Dock = DockStyle.Top,
             AutoSize = true,
-            WrapContents = true,
+            ColumnCount = 8,
+            RowCount = 2,
+            GrowStyle = TableLayoutPanelGrowStyle.FixedSize,
             Padding = new Padding(0, 0, 0, 10)
         };
+        panel.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+        panel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 125));
+        panel.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+        panel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 190));
+        panel.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+        panel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
+        panel.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+        panel.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+        panel.RowStyles.Add(new RowStyle(SizeType.Absolute, 34));
+        panel.RowStyles.Add(new RowStyle(SizeType.Absolute, 34));
 
-        panel.Controls.Add(CreateOptionLabel("帧率", 0));
+        panel.Controls.Add(CreateOptionLabel("帧率", 0), 0, 0);
 
         framerate.DropDownStyle = ComboBoxStyle.DropDown;
         framerate.Items.AddRange(
@@ -176,45 +188,49 @@ public sealed class MainForm : Form
             "60"
         ]);
         framerate.Text = settings.LastFramerate ?? string.Empty;
-        framerate.Width = 120;
-        panel.Controls.Add(framerate);
+        framerate.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+        framerate.Margin = new Padding(0, 0, 12, 0);
+        panel.Controls.Add(framerate, 1, 0);
 
-        panel.Controls.Add(CreateOptionLabel("CLT 样式", 16));
+        panel.Controls.Add(CreateOptionLabel("过渡方式", 0), 2, 0);
         style.DropDownStyle = ComboBoxStyle.DropDownList;
         style.Items.AddRange(["NO_TRANSITION", "FADE", "DISSOLVE"]);
         style.SelectedIndex = 0;
-        style.Width = 170;
-        panel.Controls.Add(style);
+        style.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+        style.Margin = new Padding(0, 0, 12, 0);
+        panel.Controls.Add(style, 3, 0);
 
         var parseButton = new Button
         {
             Text = "解析脚本",
-            AutoSize = true,
-            Height = 30,
-            Margin = new Padding(16, 0, 0, 0)
+            Size = new Size(96, 30),
+            Anchor = AnchorStyles.Left,
+            Margin = Padding.Empty
         };
         parseButton.Click += (_, _) => ParseVpy(showWarnings: true);
-        panel.Controls.Add(parseButton);
+        panel.Controls.Add(parseButton, 4, 0);
 
-        panel.Controls.Add(CreateOptionLabel("音轨", 18));
+        panel.Controls.Add(CreateOptionLabel("音轨", 0), 0, 1);
         audioTrack.DropDownStyle = ComboBoxStyle.DropDownList;
-        audioTrack.Width = 310;
+        audioTrack.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+        audioTrack.Margin = new Padding(0, 0, 12, 0);
         audioTrack.SelectedIndexChanged += (_, _) => UpdateOutputForSelectedTrack();
-        panel.Controls.Add(audioTrack);
+        panel.Controls.Add(audioTrack, 1, 1);
+        panel.SetColumnSpan(audioTrack, 5);
 
         analyzeButton.Text = "分析媒体";
-        analyzeButton.AutoSize = true;
-        analyzeButton.Height = 30;
-        analyzeButton.Margin = new Padding(8, 0, 0, 0);
+        analyzeButton.Size = new Size(96, 30);
+        analyzeButton.Anchor = AnchorStyles.Left;
+        analyzeButton.Margin = Padding.Empty;
         analyzeButton.Click += async (_, _) => await AnalyzeMediaAsync(promptForFfmpeg: true, showErrors: true);
-        panel.Controls.Add(analyzeButton);
+        panel.Controls.Add(analyzeButton, 6, 1);
 
         toolsButton.Text = "工具...";
-        toolsButton.AutoSize = true;
-        toolsButton.Height = 30;
+        toolsButton.Size = new Size(80, 30);
+        toolsButton.Anchor = AnchorStyles.Left;
         toolsButton.Margin = new Padding(8, 0, 0, 0);
         toolsButton.Click += (_, _) => ShowToolsMenu();
-        panel.Controls.Add(toolsButton);
+        panel.Controls.Add(toolsButton, 7, 1);
 
         return panel;
     }
@@ -226,7 +242,7 @@ public sealed class MainForm : Form
             Text = text,
             AutoSize = true,
             Anchor = AnchorStyles.Left,
-            Margin = new Padding(leftMargin, 7, 6, 0)
+            Margin = new Padding(leftMargin, 0, 8, 0)
         };
     }
 

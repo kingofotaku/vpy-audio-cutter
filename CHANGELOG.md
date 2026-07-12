@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.1 - 2026-07-12
+
+- Keep the audio track selector, Analyze Media button, and Tools button aligned on one responsive row.
+- Replace the wrapping options flow with a stable two-row table layout.
+- Vertically center the framerate, transition selector, and Parse Script button.
+- Rename the UI label from "CLT style" to the more accurate "Transition".
+
 ## 1.0.0 - 2026-07-12
 
 - Parse VapourSynth and AviSynth Trim ranges without executing scripts.
