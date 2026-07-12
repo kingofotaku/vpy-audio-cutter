@@ -31,9 +31,9 @@ public sealed class MainForm : Form
     private readonly TextBox audioInputPath = new();
     private readonly TextBox audioOutputPath = new();
     private readonly TextBox cltPath = new();
-    private readonly ComboBox framerate = new();
-    private readonly ComboBox style = new();
-    private readonly ComboBox audioTrack = new();
+    private readonly UnifiedComboBox framerate = new();
+    private readonly UnifiedComboBox style = new() { IsTextReadOnly = true };
+    private readonly UnifiedComboBox audioTrack = new() { IsTextReadOnly = true };
     private readonly DataGridView sections = new();
     private readonly Label status = new();
     private readonly ProgressBar progressBar = new();
@@ -55,6 +55,9 @@ public sealed class MainForm : Form
         settings = AppSettingsStore.Load();
 
         Text = "VPY / AVS Audio Cutter";
+        var applicationIcon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
+        if (applicationIcon is not null)
+            Icon = applicationIcon;
         Font = new Font("Microsoft YaHei UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
         AutoScaleMode = AutoScaleMode.Dpi;
         MinimumSize = new Size(860, 620);
@@ -191,9 +194,9 @@ public sealed class MainForm : Form
         framerate.Anchor = AnchorStyles.Left | AnchorStyles.Right;
         framerate.Margin = new Padding(0, 0, 12, 0);
         panel.Controls.Add(framerate, 1, 0);
+        var optionControlHeight = framerate.PreferredHeight;
 
         panel.Controls.Add(CreateOptionLabel("过渡方式", 0), 2, 0);
-        style.DropDownStyle = ComboBoxStyle.DropDownList;
         style.Items.AddRange(["NO_TRANSITION", "FADE", "DISSOLVE"]);
         style.SelectedIndex = 0;
         style.Anchor = AnchorStyles.Left | AnchorStyles.Right;
@@ -203,7 +206,7 @@ public sealed class MainForm : Form
         var parseButton = new Button
         {
             Text = "解析脚本",
-            Size = new Size(96, 30),
+            Size = new Size(96, optionControlHeight),
             Anchor = AnchorStyles.Left,
             Margin = Padding.Empty
         };
@@ -211,7 +214,6 @@ public sealed class MainForm : Form
         panel.Controls.Add(parseButton, 4, 0);
 
         panel.Controls.Add(CreateOptionLabel("音轨", 0), 0, 1);
-        audioTrack.DropDownStyle = ComboBoxStyle.DropDownList;
         audioTrack.Anchor = AnchorStyles.Left | AnchorStyles.Right;
         audioTrack.Margin = new Padding(0, 0, 12, 0);
         audioTrack.SelectedIndexChanged += (_, _) => UpdateOutputForSelectedTrack();
@@ -219,14 +221,14 @@ public sealed class MainForm : Form
         panel.SetColumnSpan(audioTrack, 5);
 
         analyzeButton.Text = "分析媒体";
-        analyzeButton.Size = new Size(96, 30);
+        analyzeButton.Size = new Size(96, optionControlHeight);
         analyzeButton.Anchor = AnchorStyles.Left;
         analyzeButton.Margin = Padding.Empty;
         analyzeButton.Click += async (_, _) => await AnalyzeMediaAsync(promptForFfmpeg: true, showErrors: true);
         panel.Controls.Add(analyzeButton, 6, 1);
 
         toolsButton.Text = "工具...";
-        toolsButton.Size = new Size(80, 30);
+        toolsButton.Size = new Size(80, optionControlHeight);
         toolsButton.Anchor = AnchorStyles.Left;
         toolsButton.Margin = new Padding(8, 0, 0, 0);
         toolsButton.Click += (_, _) => ShowToolsMenu();

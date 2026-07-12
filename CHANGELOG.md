@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.2 - 2026-07-12
+
+- Use one native combo-box implementation for framerate, transition, and audio-track selectors while keeping only the framerate field editable.
+- Match option-row button heights to the system-calculated combo-box height.
+- Add zero-tolerance UI smoke checks for framerate, transition, and label geometry.
+- Add a multi-resolution application icon for the window and executable.
+
 ## 1.0.1 - 2026-07-12
 
 - Keep the audio track selector, Analyze Media button, and Tools button aligned on one responsive row.

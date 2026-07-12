@@ -32,26 +32,44 @@ internal static class Program
         var transitionSelector = controls
             .OfType<ComboBox>()
             .Single(comboBox => comboBox.Items.Contains("NO_TRANSITION"));
-        var parseButton = controls.OfType<Button>().Single(button => button.Text == "解析脚本");
-        if (Math.Abs(GetVerticalCenter(fpsSelector) - GetVerticalCenter(transitionSelector)) > 1 ||
-            Math.Abs(GetVerticalCenter(transitionSelector) - GetVerticalCenter(parseButton)) > 1)
+        if (transitionSelector.DropDownStyle != ComboBoxStyle.DropDown ||
+            transitionSelector.GetType().Name != "UnifiedComboBox" ||
+            fpsSelector.GetType() != transitionSelector.GetType())
         {
-            throw new InvalidOperationException("The framerate, transition, and parse controls must share one vertical center.");
+            throw new InvalidOperationException("The framerate and transition selectors must use the same control implementation.");
         }
+        AssertExactGeometry(
+            "The framerate and transition selector borders must align exactly.",
+            fpsSelector,
+            transitionSelector);
 
-        if (!controls.OfType<Label>().Any(label => label.Text == "过渡方式"))
-            throw new InvalidOperationException("The CLT transition field must use an accurate label.");
+        var parseButton = controls.OfType<Button>().Single(button => button.Text == "解析脚本");
+        AssertRowAlignment(
+            "The framerate, transition, and parse controls must share one top edge and height.",
+            fpsSelector,
+            transitionSelector,
+            parseButton);
+
+        var framerateLabel = controls.OfType<Label>().Single(label => label.Text == "帧率");
+        var transitionLabel = controls.OfType<Label>().Single(label => label.Text == "过渡方式");
+        AssertExactGeometry(
+            "The framerate and transition labels must align exactly.",
+            framerateLabel,
+            transitionLabel);
 
         var audioTrackSelector = controls
             .OfType<ComboBox>()
-            .Single(comboBox => comboBox.DropDownStyle == ComboBoxStyle.DropDownList && comboBox.Items.Count == 0);
+            .Single(comboBox => comboBox.GetType().Name == "UnifiedComboBox" && comboBox.Items.Count == 0);
+        if (audioTrackSelector.DropDownStyle != ComboBoxStyle.DropDown)
+            throw new InvalidOperationException("The audio track selector must use the normalized native appearance.");
+
         var analyzeButton = controls.OfType<Button>().Single(button => button.Text == "分析媒体");
         var toolsButton = controls.OfType<Button>().Single(button => button.Text == "工具...");
-        if (Math.Abs(GetVerticalCenter(audioTrackSelector) - GetVerticalCenter(analyzeButton)) > 1 ||
-            Math.Abs(GetVerticalCenter(analyzeButton) - GetVerticalCenter(toolsButton)) > 1)
-        {
-            throw new InvalidOperationException("The audio track controls must stay aligned on one row.");
-        }
+        AssertRowAlignment(
+            "The audio track controls must share one top edge and height.",
+            audioTrackSelector,
+            analyzeButton,
+            toolsButton);
 
         using var bitmap = new Bitmap(form.Width, form.Height);
         form.DrawToBitmap(bitmap, new Rectangle(Point.Empty, bitmap.Size));
@@ -59,9 +77,34 @@ internal static class Program
         form.Close();
     }
 
-    private static int GetVerticalCenter(Control control)
+    private static void AssertRowAlignment(string message, params Control[] controls)
     {
-        return control.Top + control.Height / 2;
+        var expectedTop = controls[0].Top;
+        var expectedHeight = controls[0].Height;
+        if (controls.Any(control =>
+                Math.Abs(control.Top - expectedTop) > 1 ||
+                Math.Abs(control.Height - expectedHeight) > 1))
+        {
+            var geometry = string.Join(
+                ", ",
+                controls.Select(control => $"{control.Text}: top={control.Top}, height={control.Height}"));
+            throw new InvalidOperationException($"{message} Actual geometry: {geometry}");
+        }
+    }
+
+    private static void AssertExactGeometry(string message, params Control[] controls)
+    {
+        var expectedTop = controls[0].Top;
+        var expectedHeight = controls[0].Height;
+        if (controls.Any(control =>
+                control.Top != expectedTop ||
+                control.Height != expectedHeight))
+        {
+            var geometry = string.Join(
+                ", ",
+                controls.Select(control => $"{control.Text}: top={control.Top}, height={control.Height}"));
+            throw new InvalidOperationException($"{message} Actual geometry: {geometry}");
+        }
     }
 
     private static IEnumerable<Control> EnumerateControls(Control root)

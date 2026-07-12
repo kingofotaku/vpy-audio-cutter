@@ -7,9 +7,10 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <AssemblyName>VpyAudioCutter</AssemblyName>
     <RootNamespace>VpyAudioCutter</RootNamespace>
-    <Version>1.0.1</Version>
-    <AssemblyVersion>1.0.1.0</AssemblyVersion>
-    <FileVersion>1.0.1.0</FileVersion>
+    <ApplicationIcon>Assets\VpyAudioCutter.ico</ApplicationIcon>
+    <Version>1.0.2</Version>
+    <AssemblyVersion>1.0.2.0</AssemblyVersion>
+    <FileVersion>1.0.2.0</FileVersion>
     <Authors>kingofotaku</Authors>
     <Description>Cut audio from VPY or AVS Trim ranges with MeGUI BeSplit, eac3to, and ffmpeg.</Description>
     <RepositoryUrl>https://github.com/kingofotaku/vpy-audio-cutter</RepositoryUrl>
