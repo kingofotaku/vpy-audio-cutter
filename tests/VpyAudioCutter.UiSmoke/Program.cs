@@ -44,7 +44,7 @@ internal static class Program
             transitionSelector);
 
         var parseButton = controls.OfType<Button>().Single(button => button.Text == "解析脚本");
-        AssertRowAlignment(
+        AssertSameHeightAndAlignedTop(
             "The framerate, transition, and parse controls must share one top edge and height.",
             fpsSelector,
             transitionSelector,
@@ -65,7 +65,7 @@ internal static class Program
 
         var analyzeButton = controls.OfType<Button>().Single(button => button.Text == "分析媒体");
         var toolsButton = controls.OfType<Button>().Single(button => button.Text == "工具...");
-        AssertRowAlignment(
+        AssertSameHeightAndAlignedTop(
             "The audio track controls must share one top edge and height.",
             audioTrackSelector,
             analyzeButton,
@@ -77,13 +77,13 @@ internal static class Program
         form.Close();
     }
 
-    private static void AssertRowAlignment(string message, params Control[] controls)
+    private static void AssertSameHeightAndAlignedTop(string message, params Control[] controls)
     {
         var expectedTop = controls[0].Top;
         var expectedHeight = controls[0].Height;
         if (controls.Any(control =>
                 Math.Abs(control.Top - expectedTop) > 1 ||
-                Math.Abs(control.Height - expectedHeight) > 1))
+                control.Height != expectedHeight))
         {
             var geometry = string.Join(
                 ", ",

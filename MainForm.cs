@@ -40,6 +40,7 @@ public sealed class MainForm : Form
     private readonly Button writeButton = new();
     private readonly Button cutButton = new();
     private readonly Button cancelButton = new();
+    private readonly Button parseButton = new();
     private readonly Button analyzeButton = new();
     private readonly Button toolsButton = new();
     private readonly ToolTip toolTip = new();
@@ -76,6 +77,12 @@ public sealed class MainForm : Form
         cutCancellation?.Cancel();
         probeCancellation?.Cancel();
         base.OnFormClosing(e);
+    }
+
+    protected override void OnShown(EventArgs e)
+    {
+        base.OnShown(e);
+        SynchronizeOptionButtonHeights();
     }
 
     private void BuildUi()
@@ -203,13 +210,10 @@ public sealed class MainForm : Form
         style.Margin = new Padding(0, 0, 12, 0);
         panel.Controls.Add(style, 3, 0);
 
-        var parseButton = new Button
-        {
-            Text = "解析脚本",
-            Size = new Size(96, optionControlHeight),
-            Anchor = AnchorStyles.Left,
-            Margin = Padding.Empty
-        };
+        parseButton.Text = "解析脚本";
+        parseButton.Size = new Size(96, optionControlHeight);
+        parseButton.Anchor = AnchorStyles.Left;
+        parseButton.Margin = Padding.Empty;
         parseButton.Click += (_, _) => ParseVpy(showWarnings: true);
         panel.Controls.Add(parseButton, 4, 0);
 
@@ -235,6 +239,13 @@ public sealed class MainForm : Form
         panel.Controls.Add(toolsButton, 7, 1);
 
         return panel;
+    }
+
+    private void SynchronizeOptionButtonHeights()
+    {
+        parseButton.Height = framerate.Height;
+        analyzeButton.Height = audioTrack.Height;
+        toolsButton.Height = audioTrack.Height;
     }
 
     private static Label CreateOptionLabel(string text, int leftMargin)
